@@ -1,4 +1,4 @@
-import { providers } from "ethers";
+import { ethers as packedEthers, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
   ProviderDetails,
@@ -19,6 +19,16 @@ import { OpenAttestationEthereumTokenRegistryStatusFragment } from "../verifiers
 import { OpenAttestationDidIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/did/didIdentityProof.type";
 import { OpenAttestationDnsDidIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsDid/dnsDidProof.type";
 import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
+const ethers: any = { ...packedEthers };
+
+if (ethers?.version?.startsWith("6.")) {
+  (ethers as any).providers = {
+    ...(ethers as any)?.providers,
+    StaticJsonRpcProvider: (ethers as any).JsonRpcProvider,
+    InfuraProvider: (ethers as any).InfuraProvider,
+    AlchemyProvider: (ethers as any).AlchemyProvider,
+  };
+}
 
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
